@@ -196,15 +196,15 @@
 
   function drawProfessionMotif(doc, profession, accent){
     const [ar,ag,ab]=accent;
-    const light=tint(accent,.84);
+    const light=tint(accent,.90);
     doc.setDrawColor(...light);
     doc.setFillColor(...light);
-    doc.setLineWidth(.35);
+    doc.setLineWidth(.28);
 
     if(profession==="photographer"){
       doc.circle(181,24,13);
       doc.circle(181,24,7.5);
-      doc.setLineWidth(.7);
+      doc.setLineWidth(.48);
       doc.line(160,10,168,10); doc.line(160,10,160,18);
       doc.line(202,10,194,10); doc.line(202,10,202,18);
       doc.line(160,39,168,39); doc.line(160,39,160,31);
@@ -245,7 +245,7 @@
     const data=gather(), t=totals(data);
     const doc=new jsPDF({unit:"mm",format:"a4",orientation:"portrait"});
     const [ar,ag,ab]=hexToRgb(data.accent);
-    const dark=[17,23,20], muted=[105,113,109];
+    const dark=[20,27,23], muted=[96,106,100], soft=[221,228,224];
     const left=18, right=192, pageW=210;
 
     // Profession-aware visual signature: noticeable, never decorative enough to distract.
@@ -258,64 +258,66 @@
       }catch(e){}
     }
 
+    // Header typography: calmer scale, tighter hierarchy and more deliberate leading.
+    const businessX=data.logo?50:left;
     doc.setTextColor(...dark);
-    doc.setFont("helvetica","bold"); doc.setFontSize(17);
-    doc.text(data.fromName || "Your business", data.logo?50:left, 24);
-    doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(...muted);
+    doc.setFont("helvetica","bold"); doc.setFontSize(16.2);
+    doc.text(data.fromName || "Your business", businessX, 23.5);
+    doc.setFont("helvetica","normal"); doc.setFontSize(8.15); doc.setTextColor(...muted);
     const fromText=lines(data.fromEmail,data.fromPhone,data.fromVat?`VAT / Reg: ${data.fromVat}`:"",data.fromAddress);
-    if(fromText) doc.text(fitText(doc,fromText,85),data.logo?50:left,30);
+    if(fromText) doc.text(fitText(doc,fromText,84),businessX,29.5,{lineHeightFactor:1.18});
 
-    doc.setTextColor(ar,ag,ab); doc.setFont("helvetica","bold"); doc.setFontSize(11);
-    doc.text("INVOICE",right,18,{align:"right"});
-    doc.setTextColor(...dark); doc.setFontSize(16);
-    doc.text(data.invoiceNumber?`#${data.invoiceNumber}`:"#",right,27,{align:"right"});
-    doc.setFont("helvetica","bold"); doc.setFontSize(6.7); doc.setTextColor(...muted);
-    doc.text((professionProfiles[data.profession] || professionProfiles.other).label,right,33,{align:"right"});
+    doc.setTextColor(ar,ag,ab); doc.setFont("helvetica","bold"); doc.setFontSize(10.4);
+    doc.text("INVOICE",right,17.8,{align:"right",charSpace:.22});
+    doc.setTextColor(...dark); doc.setFontSize(15.4);
+    doc.text(data.invoiceNumber?`#${data.invoiceNumber}`:"#",right,27.2,{align:"right"});
+    doc.setFont("helvetica","bold"); doc.setFontSize(6.25); doc.setTextColor(...muted);
+    doc.text((professionProfiles[data.profession] || professionProfiles.other).label,right,33.4,{align:"right",charSpace:.12});
 
-    doc.setDrawColor(ar,ag,ab); doc.setLineWidth(.65); doc.line(left,43,right,43);
+    doc.setDrawColor(ar,ag,ab); doc.setLineWidth(.52); doc.line(left,44,right,44);
 
-    doc.setFontSize(7.5); doc.setTextColor(...muted); doc.text("BILL TO",left,55);
-    doc.setTextColor(...dark); doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.text(data.clientName || "Client name",left,62);
-    doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(...muted);
+    doc.setFont("helvetica","bold"); doc.setFontSize(7.15); doc.setTextColor(...muted); doc.text("BILL TO",left,56.5,{charSpace:.14});
+    doc.setTextColor(...dark); doc.setFontSize(10.25); doc.text(data.clientName || "Client name",left,63.6);
+    doc.setFont("helvetica","normal"); doc.setFontSize(8.25); doc.setTextColor(...muted);
     const clientText=lines(data.clientEmail,data.clientAddress);
-    if(clientText) doc.text(fitText(doc,clientText,90),left,68);
+    if(clientText) doc.text(fitText(doc,clientText,90),left,69.6,{lineHeightFactor:1.18});
 
-    doc.setFontSize(8); doc.setTextColor(...muted); doc.text("Date",145,55); doc.text("Due",145,63);
-    doc.setTextColor(...dark); doc.setFont("helvetica","bold"); doc.text(displayDate(data.invoiceDate),right,55,{align:"right"}); doc.text(displayDate(data.dueDate),right,63,{align:"right"});
+    doc.setFontSize(7.7); doc.setTextColor(...muted); doc.text("Date",145,56.5); doc.text("Due",145,64.5);
+    doc.setTextColor(...dark); doc.setFont("helvetica","bold"); doc.setFontSize(8.1); doc.text(displayDate(data.invoiceDate),right,56.5,{align:"right"}); doc.text(displayDate(data.dueDate),right,64.5,{align:"right"});
 
     const body=data.items.map(r=>[r.description||"Service",String(r.qty),money(r.rate),money(r.qty*r.rate)]);
     doc.autoTable({
-      startY:88,
+      startY:90,
       margin:{left,right:18},
       head:[["Description","Qty","Rate","Amount"]],
       body,
-      styles:{font:"helvetica",fontSize:8.5,textColor:dark,cellPadding:3.2,lineColor:[235,239,236],lineWidth:{bottom:.15}},
-      headStyles:{fillColor:[255,255,255],textColor:muted,fontStyle:"bold",fontSize:7.5,lineColor:[203,211,207],lineWidth:{bottom:.35}},
+      styles:{font:"helvetica",fontSize:8.35,textColor:dark,cellPadding:{top:3.5,right:3.2,bottom:3.5,left:3.2},lineColor:[232,237,234],lineWidth:{bottom:.12}},
+      headStyles:{fillColor:[255,255,255],textColor:muted,fontStyle:"bold",fontSize:7.15,lineColor:[196,207,201],lineWidth:{bottom:.28},cellPadding:{top:2.8,right:3.2,bottom:3.4,left:3.2}},
       columnStyles:{0:{cellWidth:92},1:{halign:"right",cellWidth:18},2:{halign:"right",cellWidth:30},3:{halign:"right",cellWidth:34}},
       theme:"plain"
     });
 
-    let y=doc.lastAutoTable.finalY+12;
+    let y=doc.lastAutoTable.finalY+11.5;
     const labelX=140, valX=192;
-    doc.setFontSize(8.5); doc.setFont("helvetica","normal"); doc.setTextColor(...muted);
+    doc.setFontSize(8.15); doc.setFont("helvetica","normal"); doc.setTextColor(...muted);
     doc.text("Subtotal",labelX,y); doc.setTextColor(...dark); doc.setFont("helvetica","bold"); doc.text(money(t.subtotal),valX,y,{align:"right"});
     if(t.discount>0){ y+=7; doc.setTextColor(...muted); doc.setFont("helvetica","normal"); doc.text("Discount",labelX,y); doc.setTextColor(...dark); doc.setFont("helvetica","bold"); doc.text(`- ${money(t.discount)}`,valX,y,{align:"right"}); }
     if(t.tax>0){ y+=7; doc.setTextColor(...muted); doc.setFont("helvetica","normal"); doc.text(`Tax (${data.taxRate}%)`,labelX,y); doc.setTextColor(...dark); doc.setFont("helvetica","bold"); doc.text(money(t.tax),valX,y,{align:"right"}); }
-    y+=10; doc.setDrawColor(ar,ag,ab); doc.setLineWidth(.6); doc.line(labelX,y-5,valX,y-5);
-    doc.setTextColor(...dark); doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.text("Total",labelX,y); doc.setTextColor(ar,ag,ab); doc.text(money(t.total),valX,y,{align:"right"});
+    y+=9.5; doc.setDrawColor(ar,ag,ab); doc.setLineWidth(.48); doc.line(labelX,y-4.8,valX,y-4.8);
+    doc.setTextColor(...dark); doc.setFont("helvetica","bold"); doc.setFontSize(11.7); doc.text("Total",labelX,y); doc.setTextColor(ar,ag,ab); doc.text(money(t.total),valX,y,{align:"right"});
 
-    let notesY=Math.max(y+22,215);
+    let notesY=Math.max(y+23,212);
     if(data.payment){
-      doc.setFontSize(7.5); doc.setTextColor(...muted); doc.text("PAYMENT DETAILS",left,notesY);
-      doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(...dark); doc.text(fitText(doc,data.payment,77),left,notesY+6);
+      doc.setFont("helvetica","bold"); doc.setFontSize(7.05); doc.setTextColor(...muted); doc.text("PAYMENT DETAILS",left,notesY,{charSpace:.12});
+      doc.setFont("helvetica","normal"); doc.setFontSize(8.2); doc.setTextColor(...dark); doc.text(fitText(doc,data.payment,77),left,notesY+6.2,{lineHeightFactor:1.2});
     }
     if(data.notes){
-      doc.setFontSize(7.5); doc.setTextColor(...muted); doc.text("NOTES",110,notesY);
-      doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(...dark); doc.text(fitText(doc,data.notes,82),110,notesY+6);
+      doc.setFont("helvetica","bold"); doc.setFontSize(7.05); doc.setTextColor(...muted); doc.text("NOTES",110,notesY,{charSpace:.12});
+      doc.setFont("helvetica","normal"); doc.setFontSize(8.2); doc.setTextColor(...dark); doc.text(fitText(doc,data.notes,82),110,notesY+6.2,{lineHeightFactor:1.2});
     }
 
-    doc.setDrawColor(236,239,236); doc.setLineWidth(.3); doc.line(left,282,right,282);
-    doc.setFont("helvetica","normal"); doc.setFontSize(6.5); doc.setTextColor(155,163,159);
+    doc.setDrawColor(230,235,232); doc.setLineWidth(.22); doc.line(left,282,right,282);
+    doc.setFont("helvetica","normal"); doc.setFontSize(6.15); doc.setTextColor(145,154,149);
     doc.text("Created privately in your browser with InvoiceTool",105,287,{align:"center"});
 
     const safe=(data.clientName || "invoice").replace(/[^a-z0-9]+/gi,"-").replace(/^-|-$/g,"").toLowerCase();
