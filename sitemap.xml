@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>https://invoice-tool.example/</loc></url>
-<url><loc>https://invoice-tool.example/how-it-works.html</loc></url>
-<url><loc>https://invoice-tool.example/about.html</loc></url>
-<url><loc>https://invoice-tool.example/privacy.html</loc></url>
-<url><loc>https://invoice-tool.example/terms.html</loc></url>
-<url><loc>https://invoice-tool.example/contact.html</loc></url>
+  <url><loc>https://pdfit.co.za/</loc></url>
+  <url><loc>https://pdfit.co.za/how-it-works.html</loc></url>
+  <url><loc>https://pdfit.co.za/about.html</loc></url>
+  <url><loc>https://pdfit.co.za/privacy.html</loc></url>
+  <url><loc>https://pdfit.co.za/terms.html</loc></url>
+  <url><loc>https://pdfit.co.za/contact.html</loc></url>
 </urlset>
