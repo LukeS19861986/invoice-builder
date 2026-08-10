@@ -269,7 +269,7 @@
 
     doc.setTextColor(ar,ag,ab); doc.setFont("helvetica","bold"); doc.setFontSize(10.4);
     doc.text("INVOICE",right,17.8,{align:"right",charSpace:.22});
-    doc.setTextColor(...dark); doc.setFontSize(15.4);
+    doc.setTextColor(...dark); doc.setFontSize(14.3);
     doc.text(data.invoiceNumber?`#${data.invoiceNumber}`:"#",right,27.2,{align:"right"});
     doc.setFont("helvetica","bold"); doc.setFontSize(6.25); doc.setTextColor(...muted);
     doc.text((professionProfiles[data.profession] || professionProfiles.other).label,right,33.4,{align:"right",charSpace:.12});
@@ -282,17 +282,17 @@
     const clientText=lines(data.clientEmail,data.clientAddress);
     if(clientText) doc.text(fitText(doc,clientText,90),left,69.6,{lineHeightFactor:1.18});
 
-    doc.setFontSize(7.7); doc.setTextColor(...muted); doc.text("Date",145,56.5); doc.text("Due",145,64.5);
-    doc.setTextColor(...dark); doc.setFont("helvetica","bold"); doc.setFontSize(8.1); doc.text(displayDate(data.invoiceDate),right,56.5,{align:"right"}); doc.text(displayDate(data.dueDate),right,64.5,{align:"right"});
+    doc.setFontSize(7.7); doc.setTextColor(...muted); doc.text("Date",145,59.2); doc.text("Due",145,67.2);
+    doc.setTextColor(...dark); doc.setFont("helvetica","bold"); doc.setFontSize(8.1); doc.text(displayDate(data.invoiceDate),right,59.2,{align:"right"}); doc.text(displayDate(data.dueDate),right,67.2,{align:"right"});
 
     const body=data.items.map(r=>[r.description||"Service",String(r.qty),money(r.rate),money(r.qty*r.rate)]);
     doc.autoTable({
-      startY:90,
+      startY:91.5,
       margin:{left,right:18},
       head:[["Description","Qty","Rate","Amount"]],
       body,
       styles:{font:"helvetica",fontSize:8.35,textColor:dark,cellPadding:{top:3.5,right:3.2,bottom:3.5,left:3.2},lineColor:[232,237,234],lineWidth:{bottom:.12}},
-      headStyles:{fillColor:[255,255,255],textColor:muted,fontStyle:"bold",fontSize:7.15,lineColor:[196,207,201],lineWidth:{bottom:.28},cellPadding:{top:2.8,right:3.2,bottom:3.4,left:3.2}},
+      headStyles:{fillColor:[255,255,255],textColor:muted,fontStyle:"bold",fontSize:7.15,lineColor:[196,207,201],lineWidth:{bottom:.28},cellPadding:{top:3.2,right:3.2,bottom:4.4,left:3.2}},
       columnStyles:{0:{cellWidth:92},1:{halign:"right",cellWidth:18},2:{halign:"right",cellWidth:30},3:{halign:"right",cellWidth:34}},
       theme:"plain"
     });
@@ -306,7 +306,7 @@
     y+=9.5; doc.setDrawColor(ar,ag,ab); doc.setLineWidth(.48); doc.line(labelX,y-4.8,valX,y-4.8);
     doc.setTextColor(...dark); doc.setFont("helvetica","bold"); doc.setFontSize(11.7); doc.text("Total",labelX,y); doc.setTextColor(ar,ag,ab); doc.text(money(t.total),valX,y,{align:"right"});
 
-    let notesY=Math.max(y+23,212);
+    let notesY=Math.max(y+20,199);
     if(data.payment){
       doc.setFont("helvetica","bold"); doc.setFontSize(7.05); doc.setTextColor(...muted); doc.text("PAYMENT DETAILS",left,notesY,{charSpace:.12});
       doc.setFont("helvetica","normal"); doc.setFontSize(8.2); doc.setTextColor(...dark); doc.text(fitText(doc,data.payment,77),left,notesY+6.2,{lineHeightFactor:1.2});
