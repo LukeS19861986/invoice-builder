@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Free Invoice Generator | Professional PDF Invoices | InvoiceTool</title>
+  <meta name="description" content="Create a professional invoice online for free. No account, no signup and nothing stored. Add your logo, line items, tax and payment details, then download a polished PDF invoice.">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#111714">
+  <link rel="canonical" href="https://invoice-tool.example/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="InvoiceTool — Make a professional invoice">
+  <meta property="og:description" content="Free, private invoice creation with no account and no stored data.">
+  <meta property="og:url" content="https://invoice-tool.example/">
+  <meta property="og:site_name" content="InvoiceTool">
+  <meta property="og:image" content="https://invoice-tool.example/social-preview.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="InvoiceTool — Make a professional invoice">
+  <meta name="twitter:description" content="Make an invoice. Download it. Done.">
+  <meta name="twitter:image" content="https://invoice-tool.example/social-preview.svg">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@graph":[
+      {"@type":"Organization","@id":"https://invoice-tool.example/#organization","name":"InvoiceTool","url":"https://invoice-tool.example/","logo":{"@type":"ImageObject","url":"https://invoice-tool.example/favicon.svg"}},
+      {"@type":"WebSite","@id":"https://invoice-tool.example/#website","url":"https://invoice-tool.example/","name":"InvoiceTool","publisher":{"@id":"https://invoice-tool.example/#organization"}},
+      {"@type":"WebPage","@id":"https://invoice-tool.example/#homepage","url":"https://invoice-tool.example/","name":"Free Invoice Generator | Professional PDF Invoices | InvoiceTool","isPartOf":{"@id":"https://invoice-tool.example/#website"},"about":{"@id":"https://invoice-tool.example/#software"}},
+      {"@type":"SoftwareApplication","@id":"https://invoice-tool.example/#software","name":"InvoiceTool","url":"https://invoice-tool.example/","applicationCategory":"BusinessApplication","applicationSubCategory":"Invoice Generator","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Create professional PDF invoices online for free with private browser-based processing. No account, no signup and no stored invoice data.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+    ]
+  }
+  </script>
+</head>
+<body>
+  <div class="glow glow-one"></div><div class="glow glow-two"></div>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="InvoiceTool home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span>InvoiceTool</span></a>
+    <a href="how-it-works.html" class="privacy-pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.7 2.7 8.6 7 10 4.3-1.4 7-5.3 7-10V6l-7-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>Nothing stored</a>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">FREE INVOICE GENERATOR</div>
+        <h1>Make an invoice.<br><span>Zero fuss.</span></h1>
+        <p class="subhead">Professional, private and ready to send. No signup, no account and nothing stored.</p>
+        <div class="profession-row">
+          <label for="profession">What kind of work do you do?</label>
+          <select id="profession">
+            <option value="freelancer">Freelancer</option>
+            <option value="photographer">Photographer</option>
+            <option value="consultant">Consultant</option>
+            <option value="builder">Builder / Trades</option>
+            <option value="designer">Designer / Creative</option>
+            <option value="tutor">Tutor / Educator</option>
+            <option value="musician">Musician / Performer</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <button id="startButton" class="upload-button" type="button">Create invoice</button>
+        <div class="trust-row"><span>No account</span><i></i><span>No storage</span><i></i><span>Free</span></div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <div class="invoice-card"><div class="invoice-mini-head"><span>INVOICE</span><strong>01</strong></div><div class="mini-logo"></div><div class="mini-line wide"></div><div class="mini-line short"></div><div class="mini-table"><span></span><span></span><span></span></div><div class="mini-total">TOTAL</div></div>
+      </div>
+    </section>
+
+    <section id="builder" class="builder hidden">
+      <div class="builder-shell">
+        <div class="builder-head">
+          <div><div class="eyebrow">YOUR INVOICE</div><h2>Tell us what goes on it.</h2></div>
+          <button id="resetButton" class="text-button" type="button">Start over</button>
+        </div>
+        <div class="form-grid">
+          <section class="panel">
+            <h3>From</h3>
+            <div class="field-grid two">
+              <label>Business / name<input id="fromName" type="text" placeholder="Your business name"></label>
+              <label>Email<input id="fromEmail" type="email" placeholder="you@example.com"></label>
+              <label>Phone<input id="fromPhone" type="text" placeholder="+27 ..."></label>
+              <label>VAT / registration no.<input id="fromVat" type="text" placeholder="Optional"></label>
+            </div>
+            <label>Address<textarea id="fromAddress" rows="3" placeholder="Business address"></textarea></label>
+            <div class="compact-row">
+              <label class="logo-upload">Logo (optional)<input id="logoInput" type="file" accept="image/png,image/jpeg,image/webp"><span id="logoLabel">Choose image</span></label>
+              <label>Accent colour<input id="accentColor" type="color" value="#2f6f57"></label>
+            </div>
+          </section>
+          <section class="panel">
+            <h3>Bill to</h3>
+            <div class="field-grid two">
+              <label>Client / company<input id="clientName" type="text" placeholder="Client name"></label>
+              <label>Email<input id="clientEmail" type="email" placeholder="client@example.com"></label>
+            </div>
+            <label>Address<textarea id="clientAddress" rows="3" placeholder="Client address"></textarea></label>
+          </section>
+          <section class="panel">
+            <h3>Invoice details</h3>
+            <div class="field-grid three">
+              <label>Invoice #<input id="invoiceNumber" type="text"></label>
+              <label>Date<input id="invoiceDate" type="date"></label>
+              <label>Due date<input id="dueDate" type="date"></label>
+            </div>
+            <div class="field-grid three">
+              <label>Currency<select id="currency"><option value="ZAR">ZAR — R</option><option value="USD">USD — $</option><option value="EUR">EUR — €</option><option value="GBP">GBP — £</option><option value="AUD">AUD — A$</option><option value="CAD">CAD — C$</option></select></label>
+              <label>Tax %<input id="taxRate" type="number" value="0" min="0" step="0.01"></label>
+              <label>Discount<input id="discount" type="number" value="0" min="0" step="0.01"></label>
+            </div>
+          </section>
+          <section class="panel full">
+            <div class="items-head"><h3>Items</h3><button id="addItemButton" class="text-button" type="button">+ Add item</button></div>
+            <div class="items-table-head"><span>Description</span><span>Qty</span><span>Rate</span><span>Amount</span><span></span></div>
+            <div id="itemsList"></div>
+          </section>
+          <section class="panel"><h3>Payment details</h3><textarea id="paymentDetails" rows="5" placeholder="Bank name, account number, payment reference..."></textarea></section>
+          <section class="panel"><h3>Notes</h3><textarea id="notes" rows="5" placeholder="Thank you for your business."></textarea></section>
+        </div>
+        <div class="builder-actions"><button id="previewButton" class="primary-action" type="button">Preview invoice</button></div>
+      </div>
+    </section>
+
+    <section id="previewSection" class="preview-section hidden">
+      <div class="preview-toolbar"><button id="editButton" class="text-button" type="button">← Edit</button><button id="downloadButton" class="primary-action" type="button">Download PDF</button></div>
+      <article id="invoicePreview" class="invoice-preview">
+        <div id="professionMotif" class="profession-motif" aria-hidden="true"></div>
+        <header class="preview-head">
+          <div class="preview-brand"><img id="previewLogo" alt="" class="preview-logo hidden"><div><h2 id="previewFromName">Your business</h2><p id="previewFromDetails"></p></div></div>
+          <div class="preview-title"><span>INVOICE</span><strong id="previewInvoiceNumber">#001</strong></div>
+        </header>
+        <div class="preview-meta">
+          <div><span class="label">BILL TO</span><strong id="previewClientName">Client name</strong><p id="previewClientDetails"></p></div>
+          <div class="date-stack"><p><span>Date</span><strong id="previewDate"></strong></p><p><span>Due</span><strong id="previewDueDate"></strong></p></div>
+        </div>
+        <div class="preview-items"><div class="preview-row preview-row-head"><span>Description</span><span>Qty</span><span>Rate</span><span>Amount</span></div><div id="previewItems"></div></div>
+        <div class="totals-wrap"><div class="totals"><p><span>Subtotal</span><strong id="previewSubtotal"></strong></p><p id="previewDiscountRow"><span>Discount</span><strong id="previewDiscount"></strong></p><p id="previewTaxRow"><span>Tax</span><strong id="previewTax"></strong></p><p class="grand-total"><span>Total</span><strong id="previewTotal"></strong></p></div></div>
+        <div class="preview-notes"><div id="previewPaymentBlock"><span class="label">PAYMENT DETAILS</span><p id="previewPayment"></p></div><div id="previewNotesBlock"><span class="label">NOTES</span><p id="previewNotes"></p></div></div>
+        <footer class="preview-footer">Created privately in your browser with InvoiceTool</footer>
+      </article>
+    </section>
+
+    <section class="reassurance">
+      <article><strong>Professional by default</strong><span>One clean invoice design with subtle tailoring for the work you do.</span></article>
+      <article><strong>Private by design</strong><span>Your invoice data stays in your browser. Nothing is stored on our servers.</span></article>
+      <article><strong>One simple job</strong><span>Create the invoice, download the PDF and get back to work.</span></article>
+    </section>
+
+    <section class="seo-content">
+      <div class="seo-content-inner">
+        <div class="eyebrow">SIMPLE. PROFESSIONAL. FREE.</div>
+        <h2>Create a professional invoice online without an account.</h2>
+        <p>InvoiceTool is a free online invoice generator for freelancers, contractors and small businesses. Add your business details, client, line items, tax and payment information, then download a polished PDF invoice directly from your browser.</p>
+        <div class="seo-points">
+          <article><strong>Free invoice generator</strong><span>Create and download professional PDF invoices without signing up.</span></article>
+          <article><strong>Built for your work</strong><span>Subtle profession-aware details keep the result relevant without looking templated.</span></article>
+          <article><strong>Nothing stored</strong><span>Invoice details and logos are processed locally in your browser.</span></article>
+        </div>
+        <a class="seo-learn-more" href="how-it-works.html">How it works →</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><span>© <span id="year"></span> InvoiceTool</span><nav aria-label="Footer navigation"><a href="/how-it-works.html">How it works</a><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/contact.html">Contact</a></nav></footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
