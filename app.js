@@ -14,27 +14,44 @@
   let logoDataUrl = "";
   let selectedProfession = "freelancer";
 
-  const professionDefaults = {
-    freelancer: ["Professional services"],
-    photographer: ["Photography services", "Editing / retouching", "Usage / licensing"],
-    consultant: ["Consulting services", "Project work", "Hourly consulting"],
-    builder: ["Labour", "Materials", "Site work"],
-    designer: ["Design services", "Creative development", "Artwork / production"],
-    tutor: ["Tutoring", "Lesson / session", "Course materials"],
-    musician: ["Performance fee", "Session work", "Production / rehearsal"],
-    other: ["Services"]
+  const professionProfiles = {
+    freelancer: {
+      label: "INDEPENDENT SERVICES",
+      defaults: ["Professional services", "Project fee", "Additional services"]
+    },
+    photographer: {
+      label: "PHOTOGRAPHY SERVICES",
+      defaults: ["Photography session", "Editing / retouching", "Usage / licensing"]
+    },
+    consultant: {
+      label: "CONSULTING SERVICES",
+      defaults: ["Consulting services", "Project advisory", "Hourly consulting"]
+    },
+    builder: {
+      label: "TRADE SERVICES",
+      defaults: ["Labour", "Materials", "Site work / call-out"]
+    },
+    designer: {
+      label: "CREATIVE SERVICES",
+      defaults: ["Design services", "Creative development", "Artwork / production"]
+    },
+    tutor: {
+      label: "EDUCATION SERVICES",
+      defaults: ["Tuition", "Lesson / session", "Course materials"]
+    },
+    musician: {
+      label: "MUSIC SERVICES",
+      defaults: ["Performance fee", "Session work", "Production / rehearsal"]
+    },
+    other: {
+      label: "PROFESSIONAL SERVICES",
+      defaults: ["Services", "Project work", "Additional services"]
+    }
   };
 
-  const motifs = {
-    photographer: "radial-gradient(circle at 30% 30%, transparent 0 32%, currentColor 33% 35%, transparent 36%), linear-gradient(90deg,currentColor 0 2px,transparent 2px 100%), linear-gradient(currentColor 0 2px,transparent 2px 100%)",
-    builder: "repeating-linear-gradient(0deg,currentColor 0 1px,transparent 1px 18px), repeating-linear-gradient(90deg,currentColor 0 1px,transparent 1px 18px)",
-    designer: "linear-gradient(45deg,currentColor 25%,transparent 25% 50%,currentColor 50% 75%,transparent 75%)",
-    tutor: "linear-gradient(currentColor 0 2px, transparent 2px 16px)",
-    musician: "repeating-radial-gradient(ellipse at center,currentColor 0 2px,transparent 3px 11px)",
-    consultant: "linear-gradient(135deg,currentColor 0 2px,transparent 2px 18px,currentColor 18px 20px,transparent 20px)",
-    freelancer: "radial-gradient(circle,currentColor 0 2px,transparent 3px)",
-    other: "radial-gradient(circle,currentColor 0 2px,transparent 3px)"
-  };
+  const professionDefaults = Object.fromEntries(
+    Object.entries(professionProfiles).map(([key, profile]) => [key, profile.defaults])
+  );
 
   const currencyMap = {
     ZAR: { symbol:"R", locale:"en-ZA" },
@@ -129,7 +146,8 @@
     preview.style.setProperty("--invoice-accent",data.accent);
     const motif=$("professionMotif");
     motif.style.color=data.accent;
-    motif.style.backgroundImage=motifs[data.profession] || motifs.other;
+    preview.className = `invoice-preview profession-${data.profession}`;
+    $("previewProfessionLabel").textContent = (professionProfiles[data.profession] || professionProfiles.other).label;
 
     $("previewFromName").textContent=data.fromName || "Your business";
     $("previewFromDetails").textContent=lines(data.fromEmail,data.fromPhone,data.fromVat?`VAT / Reg: ${data.fromVat}`:"",data.fromAddress);
@@ -172,6 +190,56 @@
     return doc.splitTextToSize(text || "",maxWidth);
   }
 
+  function tint(rgb, amount=.82){
+    return rgb.map(v => Math.round(v + (255-v)*amount));
+  }
+
+  function drawProfessionMotif(doc, profession, accent){
+    const [ar,ag,ab]=accent;
+    const light=tint(accent,.84);
+    doc.setDrawColor(...light);
+    doc.setFillColor(...light);
+    doc.setLineWidth(.35);
+
+    if(profession==="photographer"){
+      doc.circle(181,24,13);
+      doc.circle(181,24,7.5);
+      doc.setLineWidth(.7);
+      doc.line(160,10,168,10); doc.line(160,10,160,18);
+      doc.line(202,10,194,10); doc.line(202,10,202,18);
+      doc.line(160,39,168,39); doc.line(160,39,160,31);
+      doc.line(202,39,194,39); doc.line(202,39,202,31);
+    } else if(profession==="builder"){
+      doc.setLineWidth(.25);
+      for(let x=162;x<=204;x+=7) doc.line(x,8,x,43);
+      for(let y=8;y<=43;y+=7) doc.line(162,y,204,y);
+      doc.setDrawColor(ar,ag,ab); doc.setLineWidth(.55);
+      doc.line(163,47,201,47); doc.line(163,44.5,163,49.5); doc.line(201,44.5,201,49.5);
+    } else if(profession==="consultant"){
+      doc.setLineWidth(.7); doc.line(169,9,169,41);
+      doc.setLineWidth(.3); doc.line(176,13,203,13); doc.line(176,21,198,21); doc.line(176,29,204,29); doc.line(176,37,194,37);
+    } else if(profession==="designer"){
+      doc.setFillColor(...light);
+      doc.rect(166,11,17,17,"F");
+      doc.triangle(187,11,204,28,187,28,"F");
+      doc.circle(175,36,8,"F");
+    } else if(profession==="tutor"){
+      doc.setLineWidth(.3);
+      for(let y=11;y<=41;y+=6) doc.line(163,y,204,y);
+      doc.setDrawColor(ar,ag,ab); doc.setLineWidth(.6); doc.rect(163,10,5,5); doc.line(174,13,190,13);
+    } else if(profession==="musician"){
+      doc.setLineWidth(.3);
+      for(let y=11;y<=35;y+=6) doc.line(162,y,204,y);
+      doc.setFillColor(ar,ag,ab); doc.circle(178,29,2.1,"F"); doc.circle(194,17,2.1,"F");
+      doc.setDrawColor(ar,ag,ab); doc.setLineWidth(.6); doc.line(180,29,180,16); doc.line(196,17,196,8);
+    } else if(profession==="freelancer"){
+      doc.setFillColor(...light); doc.circle(173,17,3,"F"); doc.circle(184,25,3,"F"); doc.circle(195,17,3,"F");
+      doc.setDrawColor(...light); doc.setLineWidth(.45); doc.line(173,17,184,25); doc.line(184,25,195,17);
+    } else {
+      doc.setFillColor(...light); doc.circle(181,22,5,"F"); doc.circle(195,31,3,"F");
+    }
+  }
+
   async function downloadPdf(){
     updatePreview();
     const data=gather(), t=totals(data);
@@ -180,18 +248,8 @@
     const dark=[17,23,20], muted=[105,113,109];
     const left=18, right=192, pageW=210;
 
-    // subtle profession motif
-    doc.setDrawColor(ar,ag,ab); doc.setLineWidth(.2);
-    if(data.profession==="builder"){
-      for(let x=160;x<=205;x+=7) doc.line(x,8,x,45);
-      for(let y=8;y<=45;y+=7) doc.line(160,y,205,y);
-    } else if(data.profession==="photographer"){
-      doc.circle(185,24,14); doc.circle(185,24,8); doc.line(162,10,168,10); doc.line(162,10,162,16);
-    } else if(data.profession==="musician"){
-      for(let i=0;i<5;i++){ const y=12+i*6; doc.line(158,y,205,y); }
-    } else {
-      doc.circle(193,18,1.2); doc.circle(185,25,1.2); doc.circle(201,31,1.2);
-    }
+    // Profession-aware visual signature: noticeable, never decorative enough to distract.
+    drawProfessionMotif(doc, data.profession, [ar,ag,ab]);
 
     if(data.logo){
       try{
@@ -211,6 +269,8 @@
     doc.text("INVOICE",right,18,{align:"right"});
     doc.setTextColor(...dark); doc.setFontSize(16);
     doc.text(data.invoiceNumber?`#${data.invoiceNumber}`:"#",right,27,{align:"right"});
+    doc.setFont("helvetica","bold"); doc.setFontSize(6.7); doc.setTextColor(...muted);
+    doc.text((professionProfiles[data.profession] || professionProfiles.other).label,right,33,{align:"right"});
 
     doc.setDrawColor(ar,ag,ab); doc.setLineWidth(.65); doc.line(left,43,right,43);
 
