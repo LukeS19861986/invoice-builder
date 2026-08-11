@@ -1,7 +1,7 @@
 {
-  "name": "PDFit",
-  "short_name": "PDFit",
-  "description": "Create one PDF from PDFs, images and camera photos with private browser-based processing.",
+  "name": "InvoiceTool",
+  "short_name": "InvoiceTool",
+  "description": "Create professional PDF invoices privately in your browser.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -11,8 +11,7 @@
     {
       "src": "/favicon.svg",
       "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "type": "image/svg+xml"
     }
   ]
 }

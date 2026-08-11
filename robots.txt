@@ -16,4 +16,4 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://pdfit.co.za/sitemap.xml
+Sitemap: https://invoice-tool.example/sitemap.xml
