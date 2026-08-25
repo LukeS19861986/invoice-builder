@@ -318,7 +318,7 @@
 
     doc.setDrawColor(230,235,232); doc.setLineWidth(.22); doc.line(left,282,right,282);
     doc.setFont("helvetica","normal"); doc.setFontSize(6.15); doc.setTextColor(145,154,149);
-    doc.text("Created privately in your browser with InvoiceTool",105,287,{align:"center"});
+    doc.text("Created privately in your browser with InvoiceCreator",105,287,{align:"center"});
 
     const safe=(data.clientName || "invoice").replace(/[^a-z0-9]+/gi,"-").replace(/^-|-$/g,"").toLowerCase();
     doc.save(`${safe || "invoice"}.pdf`);

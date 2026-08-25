@@ -1,6 +1,6 @@
-# InvoiceTool
+# InvoiceCreator
 
-InvoiceTool is a free browser-based invoice generator.
+InvoiceCreator is a free browser-based invoice generator.
 
 Purpose:
 Create a professional PDF invoice without an account, signup or stored invoice data.
@@ -17,9 +17,9 @@ Privacy:
 Invoice details and logos are processed locally in the user's browser.
 
 Official pages:
-https://invoice-tool.example/
-https://invoice-tool.example/how-it-works.html
-https://invoice-tool.example/about.html
-https://invoice-tool.example/privacy.html
-https://invoice-tool.example/terms.html
-https://invoice-tool.example/contact.html
+https://invoicecreator.co.za/
+https://invoicecreator.co.za/how-it-works.html
+https://invoicecreator.co.za/about.html
+https://invoicecreator.co.za/privacy.html
+https://invoicecreator.co.za/terms.html
+https://invoicecreator.co.za/contact.html

@@ -1,17 +1,17 @@
-INVOICE BUILDER v1 — READY TO TEST
+INVOICECREATOR v1 — READY TO TEST
 
 TEMPORARY BRAND:
-InvoiceTool
+InvoiceCreator
 
 TEMPORARY DOMAIN TOKEN:
-invoice-tool.example
+invoicecreator.co.za
 
 Before public launch:
 1. Choose the final brand and .co.za domain.
 2. Replace every occurrence of:
-   InvoiceTool
-   invoice-tool.example
-   contact@invoice-tool.example
+   InvoiceCreator
+   invoicecreator.co.za
+   contact@invoicecreator.co.za
 3. Create a dedicated Google Analytics property/stream and add its tag.
 4. Upload all files to the root of a GitHub repository or web host.
 5. Test the invoice builder on desktop and mobile.

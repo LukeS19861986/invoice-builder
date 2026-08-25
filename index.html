@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Free Invoice Generator | Professional PDF Invoices | InvoiceTool</title>
+  <title>Free Invoice Generator | Professional PDF Invoices | InvoiceCreator</title>
   <meta name="description" content="Create a professional invoice online for free. No account, no signup and nothing stored. Add your logo, line items, tax and payment details, then download a polished PDF invoice.">
   <meta name="robots" content="index,follow">
   <meta name="theme-color" content="#111714">
-  <link rel="canonical" href="https://invoice-tool.example/">
+  <link rel="canonical" href="https://invoicecreator.co.za/">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="site.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,23 +15,23 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="InvoiceTool — Make a professional invoice">
+  <meta property="og:title" content="InvoiceCreator — Make a professional invoice">
   <meta property="og:description" content="Free, private invoice creation with no account and no stored data.">
-  <meta property="og:url" content="https://invoice-tool.example/">
-  <meta property="og:site_name" content="InvoiceTool">
-  <meta property="og:image" content="https://invoice-tool.example/social-preview.svg">
+  <meta property="og:url" content="https://invoicecreator.co.za/">
+  <meta property="og:site_name" content="InvoiceCreator">
+  <meta property="og:image" content="https://invoicecreator.co.za/social-preview.svg">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="InvoiceTool — Make a professional invoice">
+  <meta name="twitter:title" content="InvoiceCreator — Make a professional invoice">
   <meta name="twitter:description" content="Make an invoice. Download it. Done.">
-  <meta name="twitter:image" content="https://invoice-tool.example/social-preview.svg">
+  <meta name="twitter:image" content="https://invoicecreator.co.za/social-preview.svg">
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
     "@graph":[
-      {"@type":"Organization","@id":"https://invoice-tool.example/#organization","name":"InvoiceTool","url":"https://invoice-tool.example/","logo":{"@type":"ImageObject","url":"https://invoice-tool.example/favicon.svg"}},
-      {"@type":"WebSite","@id":"https://invoice-tool.example/#website","url":"https://invoice-tool.example/","name":"InvoiceTool","publisher":{"@id":"https://invoice-tool.example/#organization"}},
-      {"@type":"WebPage","@id":"https://invoice-tool.example/#homepage","url":"https://invoice-tool.example/","name":"Free Invoice Generator | Professional PDF Invoices | InvoiceTool","isPartOf":{"@id":"https://invoice-tool.example/#website"},"about":{"@id":"https://invoice-tool.example/#software"}},
-      {"@type":"SoftwareApplication","@id":"https://invoice-tool.example/#software","name":"InvoiceTool","url":"https://invoice-tool.example/","applicationCategory":"BusinessApplication","applicationSubCategory":"Invoice Generator","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Create professional PDF invoices online for free with private browser-based processing. No account, no signup and no stored invoice data.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+      {"@type":"Organization","@id":"https://invoicecreator.co.za/#organization","name":"InvoiceCreator","url":"https://invoicecreator.co.za/","logo":{"@type":"ImageObject","url":"https://invoicecreator.co.za/favicon.svg"}},
+      {"@type":"WebSite","@id":"https://invoicecreator.co.za/#website","url":"https://invoicecreator.co.za/","name":"InvoiceCreator","publisher":{"@id":"https://invoicecreator.co.za/#organization"}},
+      {"@type":"WebPage","@id":"https://invoicecreator.co.za/#homepage","url":"https://invoicecreator.co.za/","name":"Free Invoice Generator | Professional PDF Invoices | InvoiceCreator","isPartOf":{"@id":"https://invoicecreator.co.za/#website"},"about":{"@id":"https://invoicecreator.co.za/#software"}},
+      {"@type":"SoftwareApplication","@id":"https://invoicecreator.co.za/#software","name":"InvoiceCreator","url":"https://invoicecreator.co.za/","applicationCategory":"BusinessApplication","applicationSubCategory":"Invoice Generator","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Create professional PDF invoices online for free with private browser-based processing. No account, no signup and no stored invoice data.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
     ]
   }
   </script>
@@ -39,7 +39,7 @@
 <body>
   <div class="glow glow-one"></div><div class="glow glow-two"></div>
   <header class="site-header">
-    <a class="brand" href="./" aria-label="InvoiceTool home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span>InvoiceTool</span></a>
+    <a class="brand" href="./" aria-label="InvoiceCreator home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span>InvoiceCreator</span></a>
     <a href="how-it-works.html" class="privacy-pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.7 2.7 8.6 7 10 4.3-1.4 7-5.3 7-10V6l-7-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>Nothing stored</a>
   </header>
   <main>
@@ -140,7 +140,7 @@
         <div class="preview-items"><div class="preview-row preview-row-head"><span>Description</span><span>Qty</span><span>Rate</span><span>Amount</span></div><div id="previewItems"></div></div>
         <div class="totals-wrap"><div class="totals"><p><span>Subtotal</span><strong id="previewSubtotal"></strong></p><p id="previewDiscountRow"><span>Discount</span><strong id="previewDiscount"></strong></p><p id="previewTaxRow"><span>Tax</span><strong id="previewTax"></strong></p><p class="grand-total"><span>Total</span><strong id="previewTotal"></strong></p></div></div>
         <div class="preview-notes"><div id="previewPaymentBlock"><span class="label">PAYMENT DETAILS</span><p id="previewPayment"></p></div><div id="previewNotesBlock"><span class="label">NOTES</span><p id="previewNotes"></p></div></div>
-        <footer class="preview-footer">Created privately in your browser with InvoiceTool</footer>
+        <footer class="preview-footer">Created privately in your browser with InvoiceCreator</footer>
       </article>
     </section>
 
@@ -154,7 +154,7 @@
       <div class="seo-content-inner">
         <div class="eyebrow">SIMPLE. PROFESSIONAL. FREE.</div>
         <h2>Create a professional invoice online without an account.</h2>
-        <p>InvoiceTool is a free online invoice generator for freelancers, contractors and small businesses. Add your business details, client, line items, tax and payment information, then download a polished PDF invoice directly from your browser.</p>
+        <p>InvoiceCreator is a free online invoice generator for freelancers, contractors and small businesses. Add your business details, client, line items, tax and payment information, then download a polished PDF invoice directly from your browser.</p>
         <div class="seo-points">
           <article><strong>Free invoice generator</strong><span>Create and download professional PDF invoices without signing up.</span></article>
           <article><strong>Built for your work</strong><span>Subtle profession-aware details keep the result relevant without looking templated.</span></article>
@@ -165,7 +165,7 @@
     </section>
   </main>
 
-  <footer class="site-footer"><span>© <span id="year"></span> InvoiceTool</span><nav aria-label="Footer navigation"><a href="/how-it-works.html">How it works</a><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/contact.html">Contact</a></nav></footer>
+  <footer class="site-footer"><span>© <span id="year"></span> InvoiceCreator</span><nav aria-label="Footer navigation"><a href="/how-it-works.html">How it works</a><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/contact.html">Contact</a></nav></footer>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
   <script src="app.js"></script>
