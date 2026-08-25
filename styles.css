@@ -14,3 +14,13 @@
 @media(max-width:900px){.hero{grid-template-columns:1fr;gap:20px}.hero-copy{text-align:center}.profession-row{margin-inline:auto}.trust-row{justify-content:center}.hero-visual{order:-1;min-height:470px}.form-grid{grid-template-columns:1fr}.panel.full{grid-column:auto}}
 @media(max-width:760px){.items-table-head{display:none}.item-row{grid-template-columns:1fr 70px 110px 34px}.item-row .item-amount{grid-column:1/-2;text-align:right}.seo-points{grid-template-columns:1fr}.seo-points article+article{padding-left:0;border-left:0;border-top:1px solid var(--line)}.preview-notes{grid-template-columns:1fr}}
 @media(max-width:560px){.site-header,.hero,.reassurance,.site-footer,.builder-shell,.preview-section{width:min(100% - 28px,1180px)}.privacy-pill{display:none}h1{font-size:clamp(54px,17vw,78px)}.hero-visual{min-height:360px}.orbit-one{width:280px;height:280px}.orbit-two{width:160px;height:160px;transform:translate(90px,-95px)}.invoice-card{transform:rotate(7deg) scale(.76)}.field-grid.two,.field-grid.three,.compact-row{grid-template-columns:1fr}.builder-head{align-items:flex-start;flex-direction:column}.item-row{grid-template-columns:1fr 70px}.reassurance{grid-template-columns:1fr}.reassurance article,.reassurance article:first-child{padding:18px 0;border-right:0;border-bottom:1px solid var(--line)}.site-footer{align-items:flex-start;flex-direction:column;gap:14px}.site-footer nav{flex-wrap:wrap;row-gap:10px}.invoice-preview{padding:16mm 10mm 16mm}.preview-head{display:grid}.preview-title{text-align:left}.preview-meta{grid-template-columns:1fr}.preview-row{grid-template-columns:1fr 46px 72px 82px;font-size:9px}.totals{width:100%}}
+
+
+/* Keep CTA text visible on legal/support pages.
+   This overrides the more specific .legal-page a rule below. */
+.legal-page a.upload-button,
+.legal-page a.upload-button:visited,
+.legal-page a.upload-button:hover,
+.legal-page a.upload-button:focus {
+  color: #fff;
+}
