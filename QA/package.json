@@ -1,0 +1,1 @@
+{"private":true,"description":"Optional development-only regression checks; not loaded by the website","devDependencies":{"jsdom":"31.0.1","jspdf":"2.5.1","jspdf-autotable":"3.8.4"}}
