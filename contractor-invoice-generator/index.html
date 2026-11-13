@@ -1,32 +1,25 @@
 <!doctype html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JJRJT8969E"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-JJRJT8969E');
-</script>
+
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <base href="/">
   <title>Free Contractor Invoice Generator | InvoiceCreator</title>
-  <meta name="description" content="Create a contractor invoice online for labour, materials and services. Free professional PDF with no account and nothing stored.">
+  <meta name="description" content="Create a contractor invoice online for labour, materials and services. Free professional PDF with no account and no server storage.">
   <meta name="robots" content="index,follow">
   <meta name="theme-color" content="#111714">
   <link rel="canonical" href="https://invoicecreator.co.za/contractor-invoice-generator/">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="manifest" href="site.webmanifest">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../site.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../styles.css">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Free Contractor Invoice Generator | InvoiceCreator">
-  <meta property="og:description" content="Create a contractor invoice online for labour, materials and services. Free professional PDF with no account and nothing stored.">
+  <meta property="og:description" content="Create a contractor invoice online for labour, materials and services. Free professional PDF with no account and no server storage.">
   <meta property="og:url" content="https://invoicecreator.co.za/contractor-invoice-generator/">
   <meta property="og:site_name" content="InvoiceCreator">
   <meta property="og:image" content="https://invoicecreator.co.za/social-preview.svg">
@@ -43,7 +36,7 @@
       "@id": "https://invoicecreator.co.za/contractor-invoice-generator/#webpage",
       "url": "https://invoicecreator.co.za/contractor-invoice-generator/",
       "name": "Free Contractor Invoice Generator | InvoiceCreator",
-      "description": "Create a contractor invoice online for labour, materials and services. Free professional PDF with no account and nothing stored.",
+      "description": "Create a contractor invoice online for labour, materials and services. Free professional PDF with no account and no server storage.",
       "isPartOf": {
         "@id": "https://invoicecreator.co.za/#website"
       }
@@ -69,7 +62,7 @@
   <div class="glow glow-one"></div><div class="glow glow-two"></div>
   <header class="site-header">
     <a class="brand" href="./" aria-label="InvoiceCreator home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span>InvoiceCreator</span></a>
-    <a href="how-it-works.html" class="privacy-pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.7 2.7 8.6 7 10 4.3-1.4 7-5.3 7-10V6l-7-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>Nothing stored</a>
+    <a href="../how-it-works.html" class="privacy-pill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.7 2.7 8.6 7 10 4.3-1.4 7-5.3 7-10V6l-7-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>Private in your browser</a>
   </header>
   <main>
     <section class="hero">
@@ -91,7 +84,7 @@
           </select>
         </div>
         <button id="startButton" class="upload-button" type="button">Create invoice</button>
-        <div class="trust-row"><span>No account</span><i></i><span>No storage</span><i></i><span>Free</span></div>
+        <div class="trust-row"><span>No account</span><i></i><span>Browser only</span><i></i><span>Free</span></div>
       </div>
       <div class="hero-visual" aria-hidden="true">
         <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
@@ -109,36 +102,37 @@
           <section class="panel">
             <h3>From</h3>
             <div class="field-grid two">
-              <label>Business / name<input id="fromName" type="text" placeholder="Your business name"></label>
+              <label>Business / name<input id="fromName" required type="text" placeholder="Your business name"></label>
               <label>Email<input id="fromEmail" type="email" placeholder="you@example.com"></label>
               <label>Phone<input id="fromPhone" type="text" placeholder="+27 ..."></label>
-              <label>VAT / registration no.<input id="fromVat" type="text" placeholder="Optional"></label>
+              <label>Business registration number<input id="fromReg" type="text" placeholder="Optional"></label>
+              <label>VAT number<input id="fromVat" type="text" placeholder="Optional"></label>
             </div>
             <label>Address<textarea id="fromAddress" rows="3" placeholder="Business address"></textarea></label>
             <div class="compact-row">
               <label class="logo-upload">Logo (optional)<input id="logoInput" type="file" accept="image/png,image/jpeg,image/webp"><span id="logoLabel">Choose image</span></label>
-              <label>Accent colour<input id="accentColor" type="color" value="#2f6f57"></label>
+              <button type="button" id="removeLogoButton" class="text-button">Remove logo</button><label>Accent colour<input id="accentColor" type="color" value="#2f6f57"></label>
             </div>
           </section>
           <section class="panel">
             <h3>Bill to</h3>
             <div class="field-grid two">
-              <label>Client / company<input id="clientName" type="text" placeholder="Client name"></label>
-              <label>Email<input id="clientEmail" type="email" placeholder="client@example.com"></label>
+              <label>Client / company<input id="clientName" autocomplete="off" required type="text" placeholder="Client name"></label>
+              <label>Email<input id="clientEmail" autocomplete="off" type="email" placeholder="client@example.com"></label>
             </div>
-            <label>Address<textarea id="clientAddress" rows="3" placeholder="Client address"></textarea></label>
+            <label>Address<textarea id="clientAddress" autocomplete="off" rows="3" placeholder="Client address"></textarea></label>
           </section>
           <section class="panel">
             <h3>Invoice details</h3>
             <div class="field-grid three">
-              <label>Invoice #<input id="invoiceNumber" type="text"></label>
-              <label>Date<input id="invoiceDate" type="date"></label>
-              <label>Due date<input id="dueDate" type="date"></label>
+              <label>Invoice #<input id="invoiceNumber" required maxlength="80" type="text"></label>
+              <label>Date<input id="invoiceDate" required type="date"></label>
+              <label>Due date<input id="dueDate" required type="date"></label>
             </div>
             <div class="field-grid three">
               <label>Currency<select id="currency"><option value="ZAR">ZAR — R</option><option value="USD">USD — $</option><option value="EUR">EUR — €</option><option value="GBP">GBP — £</option><option value="AUD">AUD — A$</option><option value="CAD">CAD — C$</option></select></label>
-              <label>Tax %<input id="taxRate" type="number" value="0" min="0" step="0.01"></label>
-              <label>Discount<input id="discount" type="number" value="0" min="0" step="0.01"></label>
+              <label>Tax %<input id="taxRate" max="100" required type="number" value="0" min="0" step="0.01"></label>
+              <label><span id="discountLabel">Discount amount (ZAR)</span><input id="discount" max="1000000000000000" required type="number" value="0" min="0" step="0.01"></label>
             </div>
           </section>
           <section class="panel full">
@@ -149,6 +143,8 @@
           <section class="panel"><h3>Payment details</h3><textarea id="paymentDetails" rows="5" placeholder="Bank name, account number, payment reference..."></textarea></section>
           <section class="panel"><h3>Notes</h3><textarea id="notes" rows="5" placeholder="Thank you for your business."></textarea></section>
         </div>
+        <div class="business-memory"><label><input id="rememberBusiness" type="checkbox"> Remember my business on this device</label><p>Optional: saves sender details, logo and payment instructions in this browser. Client details are never saved automatically. Avoid on shared devices.</p><button id="clearBusinessButton" type="button" class="text-button">Clear saved business</button><p id="memoryStatus" role="status" aria-live="polite"></p></div>
+        <div class="draft-actions"><button id="exportDraftButton" type="button" class="text-button">Export editable draft</button><label class="text-button">Import editable draft<input id="importDraftInput" type="file" accept=".json,application/json"></label><p>Draft files include client and payment details. Keep them somewhere private. Import reads a local file; nothing is uploaded.</p></div>
         <div class="builder-actions"><button id="previewButton" class="primary-action" type="button">Preview invoice</button></div>
       </div>
     </section>
@@ -197,6 +193,6 @@
   <footer class="site-footer"><span>© <span id="year"></span> InvoiceCreator</span><nav aria-label="Footer navigation"><a href="/how-it-works.html">How it works</a><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/contact.html">Contact</a></nav></footer>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
-  <script src="app.js"></script>
+  <script src="../app.js"></script>
 </body>
 </html>
