@@ -1,50 +1,12 @@
-INVOICECREATOR v1 — READY TO TEST
+InvoiceCreator — corrected static source
 
-TEMPORARY BRAND:
-InvoiceCreator
+Deploy the contents of this folder to the existing website document root.
+No build or npm install is required for the site. Nothing has been deployed.
+Back up the live site before replacing files. Preserve any hosting-specific
+configuration not supplied in this archive. QA/ and the text reports are for
+review/testing and may be omitted from the public upload.
 
-TEMPORARY DOMAIN TOKEN:
-invoicecreator.co.za
-
-Before public launch:
-1. Choose the final brand and .co.za domain.
-2. Replace every occurrence of:
-   InvoiceCreator
-   invoicecreator.co.za
-   contact@invoicecreator.co.za
-3. Create a dedicated Google Analytics property/stream and add its tag.
-4. Upload all files to the root of a GitHub repository or web host.
-5. Test the invoice builder on desktop and mobile.
-6. After the final domain is live: Search Console, Bing Webmaster Tools, sitemap.xml, robots.txt, Rich Results Test, PageSpeed, HTTPS and indexing.
-7. Check the legal/tax wording for your target jurisdiction before relying on the tool as a compliance-specific invoice generator.
-
-PRODUCT PHILOSOPHY:
-Make an invoice -> preview -> download -> done.
-No account.
-No saved client database.
-No subscription.
-No clutter.
-
-FUNCTIONS INCLUDED:
-- Profession selection with subtle profession-aware invoice motif
-- Business/client details
-- Optional logo
-- Accent colour
-- Invoice number/date/due date
-- ZAR/USD/EUR/GBP/AUD/CAD
-- Line items
-- Tax %
-- Flat monetary discount
-- Payment details
-- Notes
-- Live HTML preview
-- Selectable-text PDF generation using jsPDF + AutoTable
-- Local browser processing
-
-NOT INCLUDED:
-- Cloud saving
-- User accounts
-- Recurring invoices
-- Payment collection
-- Bookkeeping
-- Tax/legal advice
+Read CHANGELOG.txt and TEST-RESULTS.txt. Real-browser/mobile acceptance checks
+remain pending because Chromium could not launch in this environment.
+The tool is free and runs locally in the browser; only explicit opt-in business
+memory or exported local drafts persist. Clients are not saved automatically.

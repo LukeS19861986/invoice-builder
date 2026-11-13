@@ -1,6 +1,7 @@
 (() => {
   "use strict";
-  const { jsPDF } = window.jspdf;
+  // PDF dependencies are checked at export time so the editor still works offline.
+  let logoLoading = false;
 
   const $ = id => document.getElementById(id);
   const profession = $("profession"), startButton = $("startButton"), builder = $("builder"),
@@ -67,7 +68,7 @@
     return `${c.symbol}${Number(value || 0).toLocaleString(c.locale,{minimumFractionDigits:2,maximumFractionDigits:2})}`;
   }
 
-  function todayISO(d=new Date()){ return d.toISOString().slice(0,10); }
+  function todayISO(d=new Date()){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
   function addDaysISO(days){ const d=new Date(); d.setDate(d.getDate()+days); return todayISO(d); }
   function displayDate(value){
     if(!value) return "";
@@ -77,7 +78,7 @@
 
   function newInvoiceNumber(){
     const d=new Date();
-    return `INV-${String(d.getFullYear()).slice(-2)}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}`;
+    return `INV-${String(d.getFullYear()).slice(-2)}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}-${Array.from(crypto.getRandomValues(new Uint8Array(6)),b=>b.toString(16).padStart(2,"0")).join("").toUpperCase()}`;
   }
 
   function addRow(description=""){
@@ -91,15 +92,18 @@
       const el=document.createElement("div");
       el.className="item-row";
       el.innerHTML = `
-        <input class="item-desc" aria-label="Description" value="${row.description.replaceAll('"','&quot;')}" placeholder="Description">
-        <input class="item-qty" aria-label="Quantity" type="number" min="0" step="0.01" value="${row.qty}">
-        <input class="item-rate" aria-label="Rate" type="number" min="0" step="0.01" value="${row.rate}">
-        <div class="item-amount">${money(row.qty*row.rate)}</div>
+        <textarea class="item-desc" aria-label="Description" rows="2" required placeholder="Description"></textarea>
+        <input class="item-qty" aria-label="Quantity" type="number" min="0.0001" max="1000000" step="0.0001" required>
+        <input class="item-rate" aria-label="Rate" type="number" min="0" max="1000000000" step="0.01" required>
+        <div class="item-amount"></div>
         <button class="remove-item" type="button" aria-label="Remove item">×</button>`;
-      const [desc,qty,rate] = el.querySelectorAll("input");
+      const desc=el.querySelector("textarea"), qty=el.querySelector(".item-qty"), rate=el.querySelector(".item-rate");
+      desc.value=row.description; qty.value=row.qty; rate.value=row.rate;
+      const amount=()=>{ el.querySelector(".item-amount").textContent=money(lineCents(row)/100); };
+      amount();
       desc.addEventListener("input",e=>{row.description=e.target.value;});
-      qty.addEventListener("input",e=>{row.qty=parseFloat(e.target.value)||0; el.querySelector(".item-amount").textContent=money(row.qty*row.rate);});
-      rate.addEventListener("input",e=>{row.rate=parseFloat(e.target.value)||0; el.querySelector(".item-amount").textContent=money(row.qty*row.rate);});
+      qty.addEventListener("input",e=>{row.qty=e.target.value; amount();});
+      rate.addEventListener("input",e=>{row.rate=e.target.value; amount();});
       el.querySelector(".remove-item").addEventListener("click",()=>{ if(rows.length>1){ rows.splice(index,1); renderRows(); }});
       itemsList.appendChild(el);
     });
@@ -111,6 +115,7 @@
       fromName:$("fromName").value.trim(),
       fromEmail:$("fromEmail").value.trim(),
       fromPhone:$("fromPhone").value.trim(),
+      fromReg:$("fromReg").value.trim(),
       fromVat:$("fromVat").value.trim(),
       fromAddress:$("fromAddress").value.trim(),
       clientName:$("clientName").value.trim(),
@@ -130,12 +135,40 @@
     };
   }
 
+  // Quantities: four decimal places; monetary inputs: cents. Round each line
+  // half up before summing, then apply the amount discount and round tax once.
+  function scaled(value, places){
+    if(!/^\d+(?:\.\d+)?$/.test(String(value || "0"))) return 0;
+    const [whole, fraction=""]=String(value || "0").split(".");
+    const result=Number(whole)*10**places + Number((fraction+"0".repeat(places)).slice(0,places));
+    return Number.isSafeInteger(result)?result:0;
+  }
+  function lineCents(row){
+    const q=BigInt(scaled(row.qty,4)), r=BigInt(scaled(row.rate,2));
+    return Number((q*r+5000n)/10000n);
+  }
   function totals(data){
-    const subtotal=data.items.reduce((s,r)=>s+(Number(r.qty)||0)*(Number(r.rate)||0),0);
-    const discount=Math.min(Math.max(data.discount,0),subtotal);
-    const taxable=Math.max(0,subtotal-discount);
-    const tax=taxable*(Math.max(data.taxRate,0)/100);
-    return {subtotal,discount,tax,total:taxable+tax};
+    const subtotalCents=data.items.reduce((sum,r)=>sum+lineCents(r),0);
+    const discountCents=scaled(data.discount,2);
+    const taxable=subtotalCents-discountCents;
+    const taxCents=Number((BigInt(taxable)*BigInt(scaled(data.taxRate,2))+5000n)/10000n);
+    return {subtotal:subtotalCents/100,discount:discountCents/100,tax:taxCents/100,total:(taxable+taxCents)/100};
+  }
+
+  function validate(){
+    if(logoLoading){ alert("Please wait for the logo to finish processing."); return false; }
+    for(const el of builder.querySelectorAll("input:not([type=file]), textarea")){
+      el.setCustomValidity("");
+      if(el.required && !el.value.trim()) el.setCustomValidity("Please complete this field.");
+      if(el.type==="number" && !/^\d+(?:\.\d+)?$/.test(el.value)) el.setCustomValidity("Enter a non-negative decimal number.");
+    }
+    if(dueDate.value && invoiceDate.value && dueDate.value<invoiceDate.value) dueDate.setCustomValidity("Due date must be on or after the invoice date.");
+    const data=gather();
+    if(data.items.reduce((s,r)=>s+lineCents(r),0)>1000000000000){ alert("Invoice subtotal is too large. Please keep it below 10 billion currency units."); return false; }
+    if(Number(discount.value)>data.items.reduce((s,r)=>s+lineCents(r),0)/100) discount.setCustomValidity("Discount cannot exceed the subtotal.");
+    const bad=Array.from(builder.querySelectorAll("input,textarea")).find(el=>!el.checkValidity());
+    if(bad){ builder.classList.remove("hidden"); previewSection.classList.add("hidden"); bad.focus(); bad.reportValidity(); return false; }
+    return true;
   }
 
   function lines(...parts){ return parts.filter(Boolean).join("\n"); }
@@ -150,7 +183,7 @@
     $("previewProfessionLabel").textContent = (professionProfiles[data.profession] || professionProfiles.other).label;
 
     $("previewFromName").textContent=data.fromName || "Your business";
-    $("previewFromDetails").textContent=lines(data.fromEmail,data.fromPhone,data.fromVat?`VAT / Reg: ${data.fromVat}`:"",data.fromAddress);
+    $("previewFromDetails").textContent=lines(data.fromEmail,data.fromPhone,data.fromReg?`Registration: ${data.fromReg}`:"",data.fromVat?`VAT: ${data.fromVat}`:"",data.fromAddress);
     $("previewClientName").textContent=data.clientName || "Client name";
     $("previewClientDetails").textContent=lines(data.clientEmail,data.clientAddress);
     $("previewInvoiceNumber").textContent=data.invoiceNumber ? `#${data.invoiceNumber}` : "#";
@@ -161,7 +194,7 @@
     pItems.innerHTML="";
     data.items.forEach(r=>{
       const row=document.createElement("div"); row.className="preview-row";
-      row.innerHTML=`<span>${r.description || "Service"}</span><span>${r.qty}</span><span>${money(r.rate)}</span><span>${money(r.qty*r.rate)}</span>`;
+      [r.description,String(r.qty),money(r.rate),money(lineCents(r)/100)].forEach(text=>{ const cell=document.createElement("span"); cell.textContent=text; row.appendChild(cell); });
       pItems.appendChild(row);
     });
 
@@ -241,6 +274,9 @@
   }
 
   async function downloadPdf(){
+    if(!validate()) return;
+    const jsPDF=window.jspdf?.jsPDF;
+    if(!jsPDF || !jsPDF.API.autoTable){ alert("PDF libraries could not load. Check your connection and reload before downloading."); return; }
     updatePreview();
     const data=gather(), t=totals(data);
     const doc=new jsPDF({unit:"mm",format:"a4",orientation:"portrait"});
@@ -251,44 +287,26 @@
     // Profession-aware visual signature: noticeable, never decorative enough to distract.
     drawProfessionMotif(doc, data.profession, [ar,ag,ab]);
 
+    // Flowing header tables keep long names and addresses clear of the items.
     if(data.logo){
-      try{
-        const fmt=data.logo.startsWith("data:image/png")?"PNG":"JPEG";
-        doc.addImage(data.logo,fmt,left,16,28,18,undefined,"FAST");
-      }catch(e){}
+      const props=doc.getImageProperties(data.logo);
+      const scale=Math.min(28/props.width,18/props.height);
+      doc.addImage(data.logo,"PNG",left,16,props.width*scale,props.height*scale);
     }
+    const fromText=lines(data.fromName,data.fromEmail,data.fromPhone,data.fromReg?`Registration: ${data.fromReg}`:"",data.fromVat?`VAT: ${data.fromVat}`:"",data.fromAddress);
+    const tableBase={theme:"plain",margin:{left,right:18,top:18,bottom:22},styles:{font:"helvetica",fontSize:9,cellPadding:2,overflow:"linebreak",textColor:dark}};
+    doc.autoTable({...tableBase,startY:data.logo?39:18,body:[[fromText,lines("INVOICE",`#${data.invoiceNumber}`,(professionProfiles[data.profession] || professionProfiles.other).label)]],columnStyles:{0:{cellWidth:100},1:{cellWidth:74,halign:"right"}}});
+    let headerEnd=doc.lastAutoTable.finalY;
+    doc.setDrawColor(ar,ag,ab); doc.line(left,headerEnd+3,right,headerEnd+3);
+    doc.autoTable({...tableBase,startY:headerEnd+8,body:[[lines("BILL TO",data.clientName,data.clientEmail,data.clientAddress),lines(`Date: ${displayDate(data.invoiceDate)}`,`Due: ${displayDate(data.dueDate)}`)]],columnStyles:{0:{cellWidth:110},1:{cellWidth:64,halign:"right"}}});
+    const itemsY=doc.lastAutoTable.finalY+8;
 
-    // Header typography: calmer scale, tighter hierarchy and more deliberate leading.
-    const businessX=data.logo?50:left;
-    doc.setTextColor(...dark);
-    doc.setFont("helvetica","bold"); doc.setFontSize(16.2);
-    doc.text(data.fromName || "Your business", businessX, 23.5);
-    doc.setFont("helvetica","normal"); doc.setFontSize(8.15); doc.setTextColor(...muted);
-    const fromText=lines(data.fromEmail,data.fromPhone,data.fromVat?`VAT / Reg: ${data.fromVat}`:"",data.fromAddress);
-    if(fromText) doc.text(fitText(doc,fromText,84),businessX,29.5,{lineHeightFactor:1.18});
-
-    doc.setTextColor(ar,ag,ab); doc.setFont("helvetica","bold"); doc.setFontSize(10.4);
-    doc.text("INVOICE",right,17.8,{align:"right",charSpace:.22});
-    doc.setTextColor(...dark); doc.setFontSize(14.3);
-    doc.text(data.invoiceNumber?`#${data.invoiceNumber}`:"#",right,27.2,{align:"right"});
-    doc.setFont("helvetica","bold"); doc.setFontSize(6.25); doc.setTextColor(...muted);
-    doc.text((professionProfiles[data.profession] || professionProfiles.other).label,right,33.4,{align:"right",charSpace:.12});
-
-    doc.setDrawColor(ar,ag,ab); doc.setLineWidth(.52); doc.line(left,44,right,44);
-
-    doc.setFont("helvetica","bold"); doc.setFontSize(7.15); doc.setTextColor(...muted); doc.text("BILL TO",left,56.5,{charSpace:.14});
-    doc.setTextColor(...dark); doc.setFontSize(10.25); doc.text(data.clientName || "Client name",left,63.6);
-    doc.setFont("helvetica","normal"); doc.setFontSize(8.25); doc.setTextColor(...muted);
-    const clientText=lines(data.clientEmail,data.clientAddress);
-    if(clientText) doc.text(fitText(doc,clientText,90),left,69.6,{lineHeightFactor:1.18});
-
-    doc.setFontSize(7.7); doc.setTextColor(...muted); doc.text("Date",145,59.2); doc.text("Due",145,67.2);
-    doc.setTextColor(...dark); doc.setFont("helvetica","bold"); doc.setFontSize(8.1); doc.text(displayDate(data.invoiceDate),right,59.2,{align:"right"}); doc.text(displayDate(data.dueDate),right,67.2,{align:"right"});
-
-    const body=data.items.map(r=>[r.description||"Service",String(r.qty),money(r.rate),money(r.qty*r.rate)]);
+    const body=data.items.map(r=>[r.description||"Service",String(r.qty),money(r.rate),money(lineCents(r)/100)]);
     doc.autoTable({
-      startY:91.5,
-      margin:{left,right:18},
+      startY:itemsY,
+      margin:{left,right:18,top:18,bottom:22},
+      rowPageBreak:"avoid",
+      showHead:"everyPage",
       head:[["Description","Qty","Rate","Amount"]],
       body,
       styles:{font:"helvetica",fontSize:8.35,textColor:dark,cellPadding:{top:3.5,right:3.2,bottom:3.5,left:3.2},lineColor:[232,237,234],lineWidth:{bottom:.12}},
@@ -298,7 +316,8 @@
     });
 
     let y=doc.lastAutoTable.finalY+11.5;
-    const labelX=140, valX=192;
+    if(y+36>274){ doc.addPage(); y=25; }
+    const labelX=130, valX=192;
     doc.setFontSize(8.15); doc.setFont("helvetica","normal"); doc.setTextColor(...muted);
     doc.text("Subtotal",labelX,y); doc.setTextColor(...dark); doc.setFont("helvetica","bold"); doc.text(money(t.subtotal),valX,y,{align:"right"});
     if(t.discount>0){ y+=7; doc.setTextColor(...muted); doc.setFont("helvetica","normal"); doc.text("Discount",labelX,y); doc.setTextColor(...dark); doc.setFont("helvetica","bold"); doc.text(`- ${money(t.discount)}`,valX,y,{align:"right"}); }
@@ -306,19 +325,19 @@
     y+=9.5; doc.setDrawColor(ar,ag,ab); doc.setLineWidth(.48); doc.line(labelX,y-4.8,valX,y-4.8);
     doc.setTextColor(...dark); doc.setFont("helvetica","bold"); doc.setFontSize(11.7); doc.text("Total",labelX,y); doc.setTextColor(ar,ag,ab); doc.text(money(t.total),valX,y,{align:"right"});
 
-    let notesY=Math.max(y+20,199);
-    if(data.payment){
-      doc.setFont("helvetica","bold"); doc.setFontSize(7.05); doc.setTextColor(...muted); doc.text("PAYMENT DETAILS",left,notesY,{charSpace:.12});
-      doc.setFont("helvetica","normal"); doc.setFontSize(8.2); doc.setTextColor(...dark); doc.text(fitText(doc,data.payment,77),left,notesY+6.2,{lineHeightFactor:1.2});
+    // AutoTable paginates arbitrary payment/notes text, including a single
+    // block longer than a page. Both blocks start below the complete totals.
+    const noteBody=[];
+    if(data.payment) noteBody.push(["PAYMENT DETAILS",data.payment]);
+    if(data.notes) noteBody.push(["NOTES",data.notes]);
+    if(noteBody.length) doc.autoTable({...tableBase,startY:y+14,body:noteBody,columnStyles:{0:{cellWidth:32,fontStyle:"bold",textColor:muted},1:{cellWidth:142}}});
+    const pages=doc.getNumberOfPages();
+    for(let page=1;page<=pages;page++){
+      doc.setPage(page);
+      doc.setDrawColor(230,235,232); doc.setLineWidth(.22); doc.line(left,282,right,282);
+      doc.setFont("helvetica","normal"); doc.setFontSize(6.15); doc.setTextColor(145,154,149);
+      doc.text(`Created privately in your browser with InvoiceCreator | ${page} / ${pages}`,105,287,{align:"center"});
     }
-    if(data.notes){
-      doc.setFont("helvetica","bold"); doc.setFontSize(7.05); doc.setTextColor(...muted); doc.text("NOTES",110,notesY,{charSpace:.12});
-      doc.setFont("helvetica","normal"); doc.setFontSize(8.2); doc.setTextColor(...dark); doc.text(fitText(doc,data.notes,82),110,notesY+6.2,{lineHeightFactor:1.2});
-    }
-
-    doc.setDrawColor(230,235,232); doc.setLineWidth(.22); doc.line(left,282,right,282);
-    doc.setFont("helvetica","normal"); doc.setFontSize(6.15); doc.setTextColor(145,154,149);
-    doc.text("Created privately in your browser with InvoiceCreator",105,287,{align:"center"});
 
     const safe=(data.clientName || "invoice").replace(/[^a-z0-9]+/gi,"-").replace(/^-|-$/g,"").toLowerCase();
     doc.save(`${safe || "invoice"}.pdf`);
@@ -348,23 +367,34 @@
     }
   });
 
-  logoInput.addEventListener("change",()=>{
-    const file=logoInput.files?.[0];
-    if(!file) return;
-    if(file.size>4*1024*1024){ alert("Please choose a logo smaller than 4 MB."); return; }
-    const reader=new FileReader();
-    reader.onload=()=>{ logoDataUrl=reader.result; logoLabel.textContent=file.name; };
-    reader.readAsDataURL(file);
+  let logoVersion=0;
+  async function normaliseLogo(file){
+    if(!["image/png","image/jpeg","image/webp"].includes(file.type) || file.size>4*1024*1024) throw new Error("Choose a PNG, JPEG or WebP logo smaller than 4 MB.");
+    const url=URL.createObjectURL(file);
+    try{
+      const image=new Image(); image.src=url; await image.decode();
+      if(!image.width || !image.height || image.width*image.height>40000000) throw new Error("Logo dimensions are too large. Please resize the image.");
+      const scale=Math.min(1,600/image.width,600/image.height), canvas=document.createElement("canvas");
+      canvas.width=Math.max(1,Math.round(image.width*scale)); canvas.height=Math.max(1,Math.round(image.height*scale));
+      canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);
+      return canvas.toDataURL("image/png");
+    }finally{ URL.revokeObjectURL(url); }
+  }
+  logoInput.addEventListener("change",async()=>{
+    const file=logoInput.files?.[0]; if(!file) return;
+    const version=++logoVersion; logoLoading=true;
+    try{ const logo=await normaliseLogo(file); if(version!==logoVersion) return; logoDataUrl=logo; logoLabel.textContent=file.name; }
+    catch(e){ if(version===logoVersion) alert(e.message || "This logo could not be read. Please choose another image."); }
+    finally{ if(version===logoVersion){logoLoading=false; logoInput.value="";} }
   });
+  $("removeLogoButton").addEventListener("click",()=>{ ++logoVersion; logoLoading=false; logoDataUrl=""; logoInput.value=""; logoLabel.textContent="Choose image"; });
 
   addItemButton.addEventListener("click",()=>addRow(""));
-  currency.addEventListener("change",renderRows);
+  function currencyChanged(){ renderRows(); $("discountLabel").textContent=`Discount amount (${currency.value})`; }
+  currency.addEventListener("change",currencyChanged);
 
   previewButton.addEventListener("click",()=>{
-    if(!$("fromName").value.trim() || !$("clientName").value.trim()){
-      alert("Please add your name/business and the client name first.");
-      return;
-    }
+    if(!validate()) return;
     updatePreview();
     builder.classList.add("hidden");
     previewSection.classList.remove("hidden");
@@ -377,17 +407,90 @@
     builder.scrollIntoView({behavior:"smooth"});
   });
 
-  downloadButton.addEventListener("click",downloadPdf);
+  downloadButton.addEventListener("click",()=>downloadPdf().catch(()=>alert("The PDF could not be created. Please check your invoice and try again.")));
   resetButton.addEventListener("click",()=>{
     if(confirm("Start a new invoice?")){
       document.querySelectorAll("input,textarea").forEach(el=>{ if(!["color","date"].includes(el.type)) el.value=""; });
-      logoDataUrl=""; logoInput.value=""; logoLabel.textContent="Choose image"; accentColor.value="#2f6f57";
+      ++logoVersion; logoLoading=false; logoDataUrl=""; logoInput.value=""; logoLabel.textContent="Choose image"; accentColor.value="#2f6f57";
       currency.value="ZAR"; taxRate.value="0"; discount.value="0"; $("paymentDetails").value=""; $("notes").value="Thank you for your business.";
       initialise();
+      restoreBusiness(); currencyChanged();
+      previewSection.classList.add("hidden"); builder.classList.remove("hidden");
       window.scrollTo({top:0,behavior:"smooth"});
     }
   });
 
+  const businessKey="invoicecreator.business.v1";
+  const businessFields=["fromName","fromEmail","fromPhone","fromReg","fromVat","fromAddress","paymentDetails"];
+  const remember=$("rememberBusiness"), memoryStatus=$("memoryStatus");
+  function saveBusiness(){
+    if(!remember.checked) return;
+    try{
+      const fields=Object.fromEntries(businessFields.map(id=>[id,$(id).value]));
+      localStorage.setItem(businessKey,JSON.stringify({version:1,fields,logo:logoDataUrl}));
+      memoryStatus.textContent="Business details saved on this device. Client details are not saved.";
+    }catch{ memoryStatus.textContent="Business details could not be saved. Device storage may be blocked or full."; }
+  }
+  function forgetBusiness(){
+    try{ localStorage.removeItem(businessKey); remember.checked=false; memoryStatus.textContent="Saved business details cleared. The current invoice is still open."; }
+    catch{ memoryStatus.textContent="Unable to clear device storage. Clear this site's data in your browser settings."; }
+  }
+  function restoreBusiness(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(businessKey)||"null");
+      if(saved?.version!==1 || !saved.fields) return;
+      businessFields.forEach(id=>{ if(typeof saved.fields[id]==="string") $(id).value=saved.fields[id]; });
+      if(typeof saved.logo==="string" && /^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(saved.logo) && saved.logo.length<2000000){ logoDataUrl=saved.logo; logoLabel.textContent="Saved business logo"; }
+      remember.checked=true; memoryStatus.textContent="Saved business details loaded from this device.";
+    }catch{ memoryStatus.textContent="Device storage is unavailable or saved business details could not be read."; }
+  }
+  remember.addEventListener("change",()=>remember.checked?saveBusiness():forgetBusiness());
+  $("clearBusinessButton").addEventListener("click",forgetBusiness);
+  businessFields.forEach(id=>$(id).addEventListener("input",saveBusiness));
+  // Logo processing is asynchronous: save only after the processed image is ready.
+  logoInput.addEventListener("change",async()=>{
+    while(logoLoading) await new Promise(resolve=>setTimeout(resolve,30));
+    saveBusiness();
+  });
+  $("removeLogoButton").addEventListener("click",saveBusiness);
+
+  const draftFields={fromName:"fromName",fromEmail:"fromEmail",fromPhone:"fromPhone",fromReg:"fromReg",fromVat:"fromVat",fromAddress:"fromAddress",clientName:"clientName",clientEmail:"clientEmail",clientAddress:"clientAddress",invoiceNumber:"invoiceNumber",invoiceDate:"invoiceDate",dueDate:"dueDate",currency:"currency",taxRate:"taxRate",discount:"discount",payment:"paymentDetails",notes:"notes",accent:"accentColor"};
+  $("exportDraftButton").addEventListener("click",()=>{
+    if(logoLoading){alert("Please wait for the logo to finish processing.");return;}
+    const data=gather();
+    // Keep raw numeric inputs so even an unfinished invoice remains editable.
+    data.taxRate=taxRate.value; data.discount=discount.value;
+    const url=URL.createObjectURL(new Blob([JSON.stringify({type:"invoicecreator-draft",version:1,data},null,2)],{type:"application/json"}));
+    const link=document.createElement("a"); link.href=url; link.download="invoice-draft.json"; link.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  });
+  $("importDraftInput").addEventListener("change",async e=>{
+    const file=e.target.files?.[0]; if(!file) return;
+    try{
+      if(file.size>3000000) throw new Error();
+      const draft=JSON.parse(await file.text()), data=draft.data;
+      if(draft.type!=="invoicecreator-draft" || draft.version!==1 || !data || !Array.isArray(data.items) || !data.items.length || data.items.length>500) throw new Error();
+      for(const key of Object.keys(draftFields)) if(!["string","number"].includes(typeof data[key]) || String(data[key]).length>50000) throw new Error();
+      if(!currencyMap[data.currency] || !professionProfiles[data.profession] || !/^#[a-f0-9]{6}$/i.test(data.accent)) throw new Error();
+      if(!data.items.every(r=>r && typeof r.description==="string" && r.description.length<=50000 && [r.qty,r.rate].every(v=>["string","number"].includes(typeof v) && String(v).length<30 && (v==="" || /^\d+(?:\.\d+)?$/.test(String(v)))))) throw new Error();
+      if(typeof data.logo!=="string" || (data.logo && (!/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(data.logo) || data.logo.length>2000000))) throw new Error();
+      let logo="";
+      if(data.logo){
+        const raw=atob(data.logo.split(",")[1]);
+        logo=await normaliseLogo(new File([Uint8Array.from(raw,c=>c.charCodeAt(0))],"draft-logo.png",{type:"image/png"}));
+      }
+      if(!confirm("Replace the current invoice with this local draft?")) return;
+      ++logoVersion; logoLoading=false;
+      Object.entries(draftFields).forEach(([key,id])=>$(id).value=data[key]);
+      profession.value=data.profession; selectedProfession=data.profession;
+      rows=data.items.map(r=>({description:r.description,qty:r.qty,rate:r.rate}));
+      logoDataUrl=logo; logoLabel.textContent=logo?"Draft logo":"Choose image";
+      remember.checked=false; memoryStatus.textContent="Draft loaded. Imported business details will only be remembered if you opt in again.";
+      currencyChanged(); previewSection.classList.add("hidden"); builder.classList.remove("hidden");
+    }catch{ alert("This draft could not be read. Choose an InvoiceCreator JSON draft (up to 3 MB). The current invoice has not been changed."); }
+    finally{ e.target.value=""; }
+  });
   $("year").textContent=new Date().getFullYear();
   initialise();
+  restoreBusiness();
 })();

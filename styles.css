@@ -24,3 +24,14 @@
 .legal-page a.upload-button:focus {
   color: #fff;
 }
+
+/* Keep long content and narrow screens usable without changing the visual theme. */
+.item-row>*{min-width:0}.item-desc{resize:vertical;min-height:50px}
+.invoice-preview{overflow-wrap:anywhere;padding-bottom:12mm}
+.preview-footer{position:static;margin-top:36px}
+.preview-row>span{min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}
+.preview-brand,.preview-brand>div,.preview-title,.preview-meta>div{min-width:0}
+.preview-logo{object-fit:contain;flex-shrink:0}
+@media(max-width:560px){.preview-row{grid-template-columns:minmax(0,1fr) 32px 60px 65px;gap:5px}.invoice-preview{padding:24px 12px}.preview-brand{flex-wrap:wrap}.preview-title strong{font-size:16px}.preview-notes{gap:20px}.item-row{grid-template-columns:minmax(0,1fr) 70px}.compact-row{display:flex;flex-wrap:wrap}}
+
+.business-memory,.draft-actions{margin-top:24px;padding:20px;border-top:1px solid var(--line);font-size:14px}.business-memory input[type=checkbox]{width:auto;margin-right:8px}.business-memory p,.draft-actions p{color:var(--muted);font-size:13px;line-height:1.6}.draft-actions{display:flex;gap:18px;flex-wrap:wrap}.draft-actions p{flex-basis:100%}.draft-actions input[type=file]{display:block;max-width:100%;font-size:12px;margin-top:8px}

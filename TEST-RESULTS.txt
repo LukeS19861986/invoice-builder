@@ -1,0 +1,67 @@
+Verification — 13 November 2026
+
+Original defects verified before fixes
+- DOM reproduction: invalid email and blank invoice number allowed into preview.
+- DOM reproduction: typed HTML interpreted as preview markup.
+- DOM reproduction: two lines displayed as 0.01 each summed to 0.01, not 0.02.
+- Source inspection: fixed-size stretched logo, combined VAT/registration input,
+  unlabelled amount discount, date-only invoice numbers and fixed PDF end blocks.
+- File inspection: all six alternate landing pages referenced missing local assets.
+
+Passed automated checks (Node DOM environment and actual jsPDF 2.5.1 /
+AutoTable 3.8.4 PDF generation; not a full browser rendering engine)
+- Decimal quantities, half-cent line rounding, matching preview/subtotal/total,
+  amount discount followed by tax. 1.2345 x 10 -> 12.35; subtotal 32.35 less
+  2.35 discount plus 4.50 tax -> 34.50.
+- Required number/email validation; excessive discount, negative quantity,
+  overprecision quantity, date order and tax maximum rejected.
+- Markup in descriptions remains literal text; no injected image element.
+- Short invoice exports to one page. 110-item long invoice exports to 20 pages,
+  including 20-line sender/client addresses and 100-line payment and notes blocks.
+- PDF text extraction confirms final item and all 100 payment/notes lines survived.
+  All PDF characters stay within physical page bounds. Rendered short, middle
+  item page and final notes page inspected visually: no clipping/overlap found.
+- A wide synthetic PNG logo appears in preview and PDF; PDF ratio remains 4:1.
+- All six landing-page DOMs initialize; local stylesheet/script assets resolve.
+- No default local storage. Opt-in saves only business fields. Reload restores
+  sender/payment; client is blank. Clear removes saved data, keeps active invoice.
+  Blocked storage is handled. Reset clears client and restores remembered sender.
+- Draft export/import round trip retains editable data. Malformed import preserves
+  the active invoice. Imported fields do not automatically become remembered data.
+- 500 generated invoice numbers had no duplicates; invoice number stays editable.
+- Source scan: no analytics, fetch/XHR/beacon calls or application console logging.
+
+Limitations / unfinished verification
+- Real-browser launch was attempted but this environment denied Chromium's socket
+  creation. Desktop/mobile visual preview and interactive downloads could not be
+  tested in Chromium, Safari/iOS, Firefox, Edge or real Android devices.
+- PNG PDF aspect ratio was tested. Real-browser PNG/JPEG/WebP decode/resizing,
+  corrupt/oversized image handling, canvas orientation and device storage quota
+  need browser checks. DOM tests do not substitute for browser layout/decoding.
+- CDN/font loading failures, offline reload and browser download behavior need
+  real-browser checks. Editor has a PDF-dependency failure message; CDN scripts
+  are still required to generate PDFs.
+- Existing PDF built-in fonts are retained. Non-Latin scripts/emoji and unusual
+  glyphs are not validated; a suitable embedded font may be needed for those.
+- No live server/cPanel configuration, hosting cache or production deployment tested.
+
+Unfinished implementation: none of the five requested feature groups omitted.
+Unfinished acceptance: the real-browser/mobile checks above. Complete before live use.
+
+Manual browser checklist
+1. Serve root over HTTP(S). Open / plus every six generator landing routes.
+2. At 320/375/390px and desktop width, enter synthetic multiline items and long
+   sender/client details; preview/edit and export PDF; check overflow/readability.
+3. Test PNG/JPEG/WebP including tall/wide, invalid, large, reselected and removed
+   logos. Export during decode should show a wait message. Confirm logo shape and orientation.
+4. Opt in, reload, make a second client invoice, clear profile, reload, and test
+   private mode/storage blocked. Only sender/logo/payment may persist.
+5. Export/import a draft with logo and many items. Try malformed JSON and cancel.
+6. Inspect network/analytics: invoice values must never leave the page.
+7. Check long PDFs, table continuation, totals, payment/notes and numbered footers.
+
+Optional regression rerun (Node 24+)
+From site root: npm install --prefix QA
+Then: node QA/verify.cjs; node QA/features.cjs; node QA/edge.cjs
+These packages are for local testing only. Do not upload node_modules.
+The included QA PDFs use synthetic data only.

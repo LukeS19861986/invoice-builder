@@ -1,0 +1,33 @@
+InvoiceCreator functionality repair — 13 November 2026
+
+Core fixes
+- Quantities support four decimal places. Rates and currency discounts use cents.
+  Each line rounds half up before summing; discount precedes rounded tax.
+- Preview, editor amounts and PDF share the same calculation functions.
+- Required names, invoice number, dates and descriptions; valid optional emails;
+  positive quantities, nonnegative rates, bounded tax, date order and discount.
+- Descriptions render as plain text, including markup, quotes and line breaks.
+- Long names/addresses flow through the PDF header. Items repeat their table
+  header on new pages; totals and arbitrarily long payment/notes paginate.
+  Page numbers and footer appear on every PDF page.
+- PNG/JPEG/WebP logos are decoded and resized locally to PNG, with error
+  messages, a remove action and proportional PDF sizing. Export is blocked while a logo is processing.
+- PDF dependency failure shows a message while leaving the editor usable.
+- Fixed missing shared asset paths on all six alternate landing pages.
+
+Requested improvements
+- Currency discount explicitly labelled with the selected currency.
+- Separate business registration number and VAT number in editor/preview/PDF.
+- Editable local-date invoice number includes a cryptographic random suffix.
+- Optional sender-only device memory: details, logo and payment instructions.
+  Clear saved business/uncheck removes the profile. No automatic client saving.
+- Local editable JSON draft export/import, validated before replacing an invoice.
+- Privacy/help explain local memory, clearing, drafts and calculation rules.
+- Removed third-party analytics scripts so they cannot inspect invoice fields,
+  form interactions, draft data or downloaded filenames. No app logging added.
+
+Scope
+No accounts, backend, document uploading, live deployment or runtime dependencies
+added. The existing jsPDF/AutoTable CDNs and fonts remain. The layout/branding
+and free tool are retained; PDF layout now flows to accommodate long content.
+Optional QA-only packages are not loaded by the website.
